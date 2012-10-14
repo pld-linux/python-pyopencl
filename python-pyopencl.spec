@@ -1,83 +1,82 @@
-# norootforbuild
-
-%{!?python_sitelib:%global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
-%{!?python_sitearch:%global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")}
-
 Summary:	Python wrapper for OpenCL
+Summary(pl.UTF-8):	Pythonowy interfejs do OpenCL
 Name:		python-pyopencl
-Version:	0.92
-Release:	0.1
-Source0:	http://pypi.python.org/pypi/pyopencl/%{version}/pyopencl-%{version}.tar.bz2
+Version:	2012.1
+Release:	1
 License:	MIT
 Group:		Development/Languages/Python
+Source0:	http://pypi.python.org/packages/source/p/pyopencl/pyopencl-%{version}.tar.gz
+# Source0-md5:	e6ae70d89d086af4636e4fbb2c806368
 URL:		http://mathema.tician.de/software/pyopencl
-BuildRequires:	nvidia-gfxG02-kmp-default >= 260.19.12
-BuildRequires:	nvidia-opencl-devel
-Requires:	python-py
-Requires:	python-decorator
-Requires:	python-pytools
-Requires:	python-numpy
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-#BuildRequires:	ati-stream-sdk >= 2.2
-BuildRequires:	libstdc++-devel
-BuildRequires:	python-distribute
-BuildRequires:	python-devel
-BuildRequires:	python-numpy
-BuildRequires:	python-numpy-devel
+BuildRequires:	OpenCL-devel >= 1.1
 BuildRequires:	boost-devel
-BuildRequires:	python-sphinx
-%{py_requires -d}
+BuildRequires:	libstdc++-devel
+BuildRequires:	python-devel
+BuildRequires:	python-decorator >= 3.2.0
+BuildRequires:	python-distribute
+BuildRequires:	python-numpy-devel
+BuildRequires:	python-pytools >= 2011.2
+BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	sphinx-pdg
+Requires:	OpenCL >= 1.1
+Requires:	python-decorator >= 3.2.0
+Requires:	python-pytools >= 2011.2
+Requires:	python-numpy
+Suggests:	python-Mako >= 0.3.6
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 PyOpenCL lets you access GPUs and other massively parallel compute
 devices from Python. It tries to offer computing goodness in the
-spirit of its sister project PyCUDA:
+spirit of its sister project PyCUDA.
 
-- Object cleanup tied to lifetime of objects. This idiom, often called
-  RAII in C++, makes it much easier to write correct, leak- and
-  crash-free code.
-- Completeness. PyOpenCL puts the full power of OpenCL's API at your
-  disposal, if you wish. Every obscure get_info() query and all CL calls
-  are accessible.
-- Automatic Error Checking. All CL errors are automatically translated
-  into Python exceptions.
-- Speed. PyOpenCL's base layer is written in C++, so all the niceties
-  above are virtually free.
-- Helpful and complete Documentation as well as a Wiki.
-- Liberal license. PyOpenCL is open-source under the MIT license and
-  free for commercial, academic, and private use.
-- Broad support. PyOpenCL was tested and works with Apple's, AMD's,
-  and Nvidia's CL implementations.
-
-
-Author:
-- ------- Andreas Kloeckner <inform at tiker net>
-
+%description -l pl.UTF-8
+PyOpenCL pozwala na dostęp z poziomu Pythona do GPU i innych znacznie
+zrównoleglonych jednostek obliczeniowych. Próbuje zaoferować
+możliwości obliczeniowe w tym samym stylu, co siostrzany projekt
+PyCUDA.
 
 %prep
 %setup -q -n pyopencl-%{version}
 
 %build
-./configure.py	--cl-inc-dir=%{_includedir} \
-		--cl-lib-dir=%{_libdir} \
-		--cl-libname=OpenCL \
-		--boost-inc-dir=%{_includedir} \
-		--boost-lib-dir=%{_libdir} \
-		--boost-python-libname=boost_python-mt \
-%__python setup.py build
+./configure.py \
+	--python-exe=%{__python} \
+	--boost-inc-dir=%{_includedir} \
+	--boost-lib-dir=%{_libdir} \
+	--cxxflags="%(echo %{rpmcxxflags} | sed -e 's/ \+/,/g')" \
+	--no-cl-enable-device-fission \
+	--no-use-shipped-boost
+# NOTES:
+# --ldflags doesn't accept commas
+# --cl-enable-gl not supported by Mesa 9.0 (missing clEnqueueReleaseGLObjects symbol)
+# device-fission requires glGetExtensionFunctionAddress (missing in Mesa 9.0)
 
+%{__python} setup.py build
+
+%{__make} -C doc html \
+	PYTHONPATH=$(echo $(pwd)/build/lib.*)
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%__python setup.py install --prefix=%{_prefix} --root=$RPM_BUILD_ROOT --record=FILE_LIST
 
-export PYTHONPATH=$RPM_BUILD_ROOT%{py_sitedir}
-%{__make} -C doc PAPER=letter html
+%{__python} setup.py install \
+	--optimize=2 \
+	--root=$RPM_BUILD_ROOT
+
+%py_postclean
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -f FILE_LIST
+%files
 %defattr(644,root,root,755)
-%doc doc/build/html/* examples/ README test/
+%doc README doc/build/html/* examples
 %dir %{py_sitedir}/pyopencl
+%attr(755,root,root) %{py_sitedir}/pyopencl/_cl.so
+%attr(755,root,root) %{py_sitedir}/pyopencl/_pvt_struct.so
+%{py_sitedir}/pyopencl/*.py[co]
+%{py_sitedir}/pyopencl/characterize
+%{py_sitedir}/pyopencl/compyte
+%{py_sitedir}/pyopencl-%{version}-py*.egg-info
+%{_includedir}/pyopencl
