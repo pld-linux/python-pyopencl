@@ -130,7 +130,7 @@ install -d build-2
 	--python-exe=%{__python} \
 	--boost-python-libname=boost_python
 
-%{__python} setup.py build --build-base build-2
+%py_build
 
 %if %{with doc}
 %{__make} -C doc html \
@@ -147,7 +147,7 @@ install -d build-3
 	--python-exe=%{__python3} \
 	--boost-python-libname=boost_python3
 
-%{__python3} setup.py build --build-base build-3
+%py3_build
 
 %{__mv} siteconf.py siteconf-3.py
 %endif
@@ -157,22 +157,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with python2}
 cp -af siteconf-2.py siteconf.py
-%{__python} setup.py \
-	build --build-base build-2 \
-	install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py_install
 
 %py_postclean
 %endif
 
 %if %{with python3}
 cp -af siteconf-3.py siteconf.py
-%{__python3} setup.py \
-	build --build-base build-3 \
-	install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py3_install
 %endif
 
 install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
