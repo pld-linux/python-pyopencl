@@ -21,7 +21,7 @@ Patch0:		%{name}-doc.patch
 URL:		http://mathema.tician.de/software/pyopencl
 BuildRequires:	OpenCL-devel >= 1.1
 BuildRequires:	libstdc++-devel
-BuildRequires:	rpmbuild(macros) >= 1.616
+BuildRequires:	rpmbuild(macros) >= 1.710
 %if %{with python2}
 BuildRequires:	boost-python-devel
 BuildRequires:	python-appdirs >= 1.4.0
