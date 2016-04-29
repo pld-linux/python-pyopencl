@@ -3,7 +3,7 @@
 %bcond_without	python2	# CPython 2.x module
 %bcond_without	python3	# CPython 3.x module
 %bcond_without	doc	# Sphinx documentation
-#
+
 %if %{without python2}
 %undefine	with_doc}
 %endif
@@ -11,7 +11,7 @@ Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
 Version:	2015.1
-Release:	7
+Release:	8
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/pypi/pyopencl
@@ -25,8 +25,8 @@ BuildRequires:	rpmbuild(macros) >= 1.710
 %if %{with python2}
 BuildRequires:	boost-python-devel
 BuildRequires:	python-appdirs >= 1.4.0
-BuildRequires:	python-devel >= 1:2.4
 BuildRequires:	python-decorator >= 3.2.0
+BuildRequires:	python-devel >= 1:2.4
 BuildRequires:	python-distribute
 BuildRequires:	python-numpy-devel
 BuildRequires:	python-pytest >= 2
@@ -36,8 +36,8 @@ BuildRequires:	python-pytools >= 2014.2
 %if %{with python3}
 BuildRequires:	boost-python3-devel
 BuildRequires:	python3-appdirs >= 1.4.0
-BuildRequires:	python3-devel >= 1:3.2
 BuildRequires:	python3-decorator >= 3.2.0
+BuildRequires:	python3-devel >= 1:3.2
 BuildRequires:	python3-distribute
 BuildRequires:	python3-numpy-devel
 BuildRequires:	python3-pytest >= 2
@@ -46,8 +46,8 @@ BuildRequires:	python3-pytools >= 2014.2
 Requires:	OpenCL >= 1.1
 Requires:	python-appdirs >= 1.4.0
 Requires:	python-decorator >= 3.2.0
-Requires:	python-pytools >= 2014.2
 Requires:	python-numpy
+Requires:	python-pytools >= 2014.2
 Suggests:	python-Mako >= 0.3.6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -69,8 +69,8 @@ Group:		Libraries/Python
 Requires:	OpenCL >= 1.1
 Requires:	python3-appdirs >= 1.4.0
 Requires:	python3-decorator >= 3.2.0
-Requires:	python3-pytools >= 2014.2
 Requires:	python3-numpy
+Requires:	python3-pytools >= 2014.2
 Suggests:	python3-Mako >= 0.3.6
 
 %description -n python3-pyopencl
@@ -88,6 +88,9 @@ PyCUDA.
 Summary:	Documentation for PyOpenCL module
 Summary(pl.UTF-8):	Dokumentacja modułu PyOpenCL
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 Documentation for PyOpenCL module.
