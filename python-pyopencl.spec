@@ -3,47 +3,55 @@
 %bcond_without	python2	# CPython 2.x module
 %bcond_without	python3	# CPython 3.x module
 %bcond_without	doc	# Sphinx documentation
+%bcond_with	tests	# py.test calls
 
 %if %{without python2}
-%undefine	with_doc}
+%undefine	with_doc
 %endif
 Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
-Version:	2015.1
-Release:	8
+Version:	2016.1
+Release:	1
 License:	MIT
 Group:		Libraries/Python
-#Source0Download: https://pypi.python.org/pypi/pyopencl
-Source0:	https://pypi.python.org/packages/source/p/pyopencl/pyopencl-%{version}.tar.gz
-# Source0-md5:	c7b9dd0bb113ad852dae6fdadd417899
-Patch0:		%{name}-doc.patch
+#Source0Download: https://pypi.python.org/simple/pyopencl/
+Source0:	https://pypi.python.org/packages/cb/4e/fcb45db7d3005f5646f28a3de2a2f8e60a6e4b629f02bbb331320778f3a1/pyopencl-%{version}.tar.gz
+# Source0-md5:	0c8a33b6a6b427bcd9c5966da461d9c6
 URL:		http://mathema.tician.de/software/pyopencl
-BuildRequires:	OpenCL-devel >= 1.1
+BuildRequires:	OpenCL-devel >= 1.2
 BuildRequires:	libstdc++-devel
 BuildRequires:	rpmbuild(macros) >= 1.710
 %if %{with python2}
-BuildRequires:	boost-python-devel
+BuildRequires:	python-cffi >= 1.1.0
+BuildRequires:	python-devel >= 1:2.6
+BuildRequires:	python-numpy-devel
+BuildRequires:	python-setuptools
+%if %{with tests}
+BuildRequires:	python-Mako >= 0.3.6
 BuildRequires:	python-appdirs >= 1.4.0
 BuildRequires:	python-decorator >= 3.2.0
-BuildRequires:	python-devel >= 1:2.4
-BuildRequires:	python-distribute
-BuildRequires:	python-numpy-devel
 BuildRequires:	python-pytest >= 2
-BuildRequires:	python-pytools >= 2014.2
+BuildRequires:	python-pytools >= 2015.1.2
+BuildRequires:	python-six >= 1.9.0
+%endif
 %{?with_doc:BuildRequires:	sphinx-pdg}
 %endif
 %if %{with python3}
-BuildRequires:	boost-python3-devel
+BuildRequires:	python3-cffi >= 1.1.0
+BuildRequires:	python3-devel >= 1:3.2
+BuildRequires:	python3-numpy-devel
+BuildRequires:	python3-setuptools
+%if %{with tests}
+BuildRequires:	python3-Mako >= 0.3.6
 BuildRequires:	python3-appdirs >= 1.4.0
 BuildRequires:	python3-decorator >= 3.2.0
-BuildRequires:	python3-devel >= 1:3.2
-BuildRequires:	python3-distribute
-BuildRequires:	python3-numpy-devel
 BuildRequires:	python3-pytest >= 2
-BuildRequires:	python3-pytools >= 2014.2
+BuildRequires:	python3-pytools >= 2015.1.2
+BuildRequires:	python3-six >= 1.9.0
 %endif
-Requires:	OpenCL >= 1.1
+%endif
+Requires:	OpenCL >= 1.2
 Requires:	python-appdirs >= 1.4.0
 Requires:	python-decorator >= 3.2.0
 Requires:	python-numpy
@@ -111,46 +119,47 @@ Przykłady do modułu PyOpenCL.
 
 %prep
 %setup -q -n pyopencl-%{version}
-%patch0 -p1
 
 %build
-# NOTES:
-# --cl-enable-gl not supported by Mesa 9.0 (missing clEnqueueReleaseGLObjects symbol)
-# device-fission requires glGetExtensionFunctionAddress (missing in Mesa 9.0)
 %define	configopts \\\
 	CXXFLAGS="%{rpmcxxflags}" \\\
 	LDFLAGS="%{rpmldflags}" \\\
-	--boost-inc-dir=%{_includedir} \\\
-	--boost-lib-dir=%{_libdir} \\\
-	--no-cl-enable-device-fission \\\
-	--no-use-shipped-boost \\\
+	--cl-enable-gl \\\
 	%{nil}
 
 %if %{with python2}
 install -d build-2
 ./configure.py \
 	%{configopts} \
-	--python-exe=%{__python} \
-	--boost-python-libname=boost_python
+	--python-exe=%{__python}
 
 %py_build
+
+%if %{with tests}
+PYTHONPATH="$(echo build-2/lib.*):." \
+py.test-%{py_ver} test
+%endif
 
 %if %{with doc}
 %{__make} -C doc html \
 	PYTHONPATH="$(echo $(pwd)/build-2/lib.*):$(pwd)"
 %endif
-%{__mv} siteconf.py siteconf-2.py
 
+%{__mv} siteconf.py siteconf-2.py
 %endif
 
 %if %{with python3}
 install -d build-3
 ./configure.py \
 	%{configopts} \
-	--python-exe=%{__python3} \
-	--boost-python-libname=boost_python3
+	--python-exe=%{__python3}
 
 %py3_build
+
+%if %{with tests}
+PYTHONPATH="$(echo build-3/lib.*):." \
+py.test-%{py3_ver} test
+%endif
 
 %{__mv} siteconf.py siteconf-3.py
 %endif
@@ -181,8 +190,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.rst
 %dir %{py_sitedir}/pyopencl
-%attr(755,root,root) %{py_sitedir}/pyopencl/_cl.so
-%attr(755,root,root) %{py_sitedir}/pyopencl/_pvt_struct.so
+%attr(755,root,root) %{py_sitedir}/pyopencl/_cffi.so
 %{py_sitedir}/pyopencl/*.py[co]
 %{py_sitedir}/pyopencl/characterize
 %{py_sitedir}/pyopencl/cl
@@ -195,8 +203,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.rst
 %dir %{py3_sitedir}/pyopencl
-%attr(755,root,root) %{py3_sitedir}/pyopencl/_cl.cpython-*.so
-%attr(755,root,root) %{py3_sitedir}/pyopencl/_pvt_struct.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/pyopencl/_cffi.cpython-*.so
 %{py3_sitedir}/pyopencl/*.py
 %{py3_sitedir}/pyopencl/__pycache__
 %{py3_sitedir}/pyopencl/characterize
