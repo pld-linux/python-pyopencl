@@ -12,7 +12,7 @@ Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
 Version:	2016.1
-Release:	1
+Release:	2
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/pyopencl/
@@ -57,7 +57,7 @@ BuildRequires:	python3-pytools >= 2015.1.2
 BuildRequires:	python3-six >= 1.9.0
 %endif
 %endif
-Requires:	OpenCL >= 1.2
+Requires:	OpenCL >= 1.1
 Requires:	python-appdirs >= 1.4.0
 Requires:	python-decorator >= 3.2.0
 Requires:	python-numpy
