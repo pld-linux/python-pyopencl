@@ -20,7 +20,7 @@ Source0:	https://pypi.python.org/packages/cb/4e/fcb45db7d3005f5646f28a3de2a2f8e6
 # Source0-md5:	0c8a33b6a6b427bcd9c5966da461d9c6
 URL:		http://mathema.tician.de/software/pyopencl
 BuildRequires:	OpenCL-devel >= 1.2
-BuildRequires:	libstdc++-devel
+BuildRequires:	libstdc++-devel >= 6:4.3
 BuildRequires:	rpmbuild(macros) >= 1.710
 %if %{with python2}
 BuildRequires:	python-cffi >= 1.1.0
@@ -35,7 +35,13 @@ BuildRequires:	python-pytest >= 2
 BuildRequires:	python-pytools >= 2015.1.2
 BuildRequires:	python-six >= 1.9.0
 %endif
-%{?with_doc:BuildRequires:	sphinx-pdg}
+%if %{with doc}
+BuildRequires:	python-numpy
+BuildRequires:	python-pytools >= 2015.1.2
+BuildRequires:	python-six >= 1.9.0
+BuildRequires:	python-sphinx_bootstrap_theme
+BuildRequires:	sphinx-pdg-2
+%endif
 %endif
 %if %{with python3}
 BuildRequires:	python3-cffi >= 1.1.0
@@ -142,7 +148,8 @@ py.test-%{py_ver} test
 
 %if %{with doc}
 %{__make} -C doc html \
-	PYTHONPATH="$(echo $(pwd)/build-2/lib.*):$(pwd)"
+	PYTHONPATH="$(echo $(pwd)/build-2/lib.*):$(pwd)" \
+	SPHINXBUILD=sphinx-build-2
 %endif
 
 %{__mv} siteconf.py siteconf-2.py
