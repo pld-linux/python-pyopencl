@@ -143,7 +143,7 @@ install -d build-2
 
 %if %{with tests}
 PYTHONPATH="$(echo build-2/lib.*):." \
-py.test-%{py_ver} test
+%{__python} -m pytest test
 %endif
 
 %if %{with doc}
@@ -165,7 +165,7 @@ install -d build-3
 
 %if %{with tests}
 PYTHONPATH="$(echo build-3/lib.*):." \
-py.test-%{py3_ver} test
+%{__python3} -m pytest test
 %endif
 
 %{__mv} siteconf.py siteconf-3.py
