@@ -5,19 +5,21 @@
 %bcond_without	doc	# Sphinx documentation
 %bcond_with	tests	# py.test calls
 
+%define		pytools_ver	2018.0.0
+
 %if %{without python2}
 %undefine	with_doc
 %endif
 Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
-Version:	2016.1
-Release:	4
+Version:	2018.1.1
+Release:	1
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/pyopencl/
-Source0:	https://pypi.python.org/packages/cb/4e/fcb45db7d3005f5646f28a3de2a2f8e60a6e4b629f02bbb331320778f3a1/pyopencl-%{version}.tar.gz
-# Source0-md5:	0c8a33b6a6b427bcd9c5966da461d9c6
+Source0:	https://files.pythonhosted.org/packages/d3/66/080ee1a9cc3f71f7491c7e3261b767c788be2aea0d694017cd25aa762b0e/pyopencl-%{version}.tar.gz
+# Source0-md5:	4a834f4e0e60016c216b3d039a2952ee
 URL:		http://mathema.tician.de/software/pyopencl
 BuildRequires:	OpenCL-devel >= 1.2
 BuildRequires:	libstdc++-devel >= 6:4.3
@@ -32,12 +34,12 @@ BuildRequires:	python-Mako >= 0.3.6
 BuildRequires:	python-appdirs >= 1.4.0
 BuildRequires:	python-decorator >= 3.2.0
 BuildRequires:	python-pytest >= 2
-BuildRequires:	python-pytools >= 2015.1.2
+BuildRequires:	python-pytools >= %{pytools_ver}
 BuildRequires:	python-six >= 1.9.0
 %endif
 %if %{with doc}
 BuildRequires:	python-numpy
-BuildRequires:	python-pytools >= 2015.1.2
+BuildRequires:	python-pytools >= %{pytools_ver}
 BuildRequires:	python-six >= 1.9.0
 BuildRequires:	python-sphinx_bootstrap_theme
 BuildRequires:	sphinx-pdg-2
@@ -53,7 +55,7 @@ BuildRequires:	python3-Mako >= 0.3.6
 BuildRequires:	python3-appdirs >= 1.4.0
 BuildRequires:	python3-decorator >= 3.2.0
 BuildRequires:	python3-pytest >= 2
-BuildRequires:	python3-pytools >= 2015.1.2
+BuildRequires:	python3-pytools >= %{pytools_ver}
 BuildRequires:	python3-six >= 1.9.0
 %endif
 %endif
@@ -61,7 +63,7 @@ Requires:	OpenCL >= 1.1
 Requires:	python-appdirs >= 1.4.0
 Requires:	python-decorator >= 3.2.0
 Requires:	python-numpy
-Requires:	python-pytools >= 2014.2
+Requires:	python-pytools >= %{pytools_ver}
 Suggests:	python-Mako >= 0.3.6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -84,7 +86,7 @@ Requires:	OpenCL >= 1.1
 Requires:	python3-appdirs >= 1.4.0
 Requires:	python3-decorator >= 3.2.0
 Requires:	python3-numpy
-Requires:	python3-pytools >= 2014.2
+Requires:	python3-pytools >= %{pytools_ver}
 Suggests:	python3-Mako >= 0.3.6
 
 %description -n python3-pyopencl
@@ -210,7 +212,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.rst
 %dir %{py3_sitedir}/pyopencl
-%attr(755,root,root) %{py3_sitedir}/pyopencl/_cffi.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/pyopencl/_cffi.*.so
 %{py3_sitedir}/pyopencl/*.py
 %{py3_sitedir}/pyopencl/__pycache__
 %{py3_sitedir}/pyopencl/characterize
