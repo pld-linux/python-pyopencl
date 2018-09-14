@@ -10,6 +10,7 @@
 %if %{without python2}
 %undefine	with_doc
 %endif
+%define		pypi_name	pyopencl
 Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
@@ -18,7 +19,7 @@ Release:	1
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/pyopencl/
-Source0:	https://files.pythonhosted.org/packages/d3/66/080ee1a9cc3f71f7491c7e3261b767c788be2aea0d694017cd25aa762b0e/pyopencl-%{version}.tar.gz
+Source0:	https://files.pythonhosted.org/packages/source/p/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 # Source0-md5:	4a834f4e0e60016c216b3d039a2952ee
 URL:		http://mathema.tician.de/software/pyopencl
 BuildRequires:	OpenCL-devel >= 1.2
