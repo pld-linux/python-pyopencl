@@ -15,7 +15,7 @@ Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
 Version:	2018.1.1
-Release:	2
+Release:	3
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/pyopencl/
@@ -38,13 +38,6 @@ BuildRequires:	python-pytest >= 2
 BuildRequires:	python-pytools >= %{pytools_ver}
 BuildRequires:	python-six >= 1.9.0
 %endif
-%if %{with doc}
-BuildRequires:	python-numpy
-BuildRequires:	python-pytools >= %{pytools_ver}
-BuildRequires:	python-six >= 1.9.0
-BuildRequires:	python-sphinx_bootstrap_theme
-BuildRequires:	sphinx-pdg-2
-%endif
 %endif
 %if %{with python3}
 BuildRequires:	python3-cffi >= 1.1.0
@@ -58,6 +51,13 @@ BuildRequires:	python3-decorator >= 3.2.0
 BuildRequires:	python3-pytest >= 2
 BuildRequires:	python3-pytools >= %{pytools_ver}
 BuildRequires:	python3-six >= 1.9.0
+%endif
+%if %{with doc}
+BuildRequires:	python3-numpy
+BuildRequires:	python3-pytools >= %{pytools_ver}
+BuildRequires:	python3-six >= 1.9.0
+BuildRequires:	python3-sphinx_bootstrap_theme
+BuildRequires:	sphinx-pdg-3
 %endif
 %endif
 Requires:	OpenCL >= 1.1
@@ -149,12 +149,6 @@ PYTHONPATH="$(echo build-2/lib.*):." \
 %{__python} -m pytest test
 %endif
 
-%if %{with doc}
-%{__make} -C doc html \
-	PYTHONPATH="$(echo $(pwd)/build-2/lib.*):$(pwd)" \
-	SPHINXBUILD=sphinx-build-2
-%endif
-
 %{__mv} siteconf.py siteconf-2.py
 %endif
 
@@ -169,6 +163,12 @@ install -d build-3
 %if %{with tests}
 PYTHONPATH="$(echo build-3/lib.*):." \
 %{__python3} -m pytest test
+%endif
+
+%if %{with doc}
+%{__make} -C doc html \
+	PYTHONPATH="$(echo $(pwd)/build-3/lib.*):$(pwd)" \
+	SPHINXBUILD=sphinx-build-3
 %endif
 
 %{__mv} siteconf.py siteconf-3.py
