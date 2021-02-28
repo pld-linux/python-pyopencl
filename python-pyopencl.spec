@@ -105,9 +105,7 @@ PyCUDA.
 Summary:	Documentation for PyOpenCL module
 Summary(pl.UTF-8):	Dokumentacja modułu PyOpenCL
 Group:		Documentation
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description apidocs
 Documentation for PyOpenCL module.
