@@ -15,7 +15,7 @@ Summary:	Python 2 wrapper for OpenCL
 Summary(pl.UTF-8):	Interfejs Pythona 2 do OpenCL
 Name:		python-pyopencl
 Version:	2018.1.1
-Release:	4
+Release:	5
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.python.org/simple/pyopencl/
